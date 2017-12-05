@@ -1,0 +1,6 @@
+<resources>
+    <string name="app_name">Ansible</string>
+    <string name="text_view_default">TOKENS HERE</string>
+    <string name="facebook_app_id">770601733096605</string>
+    <string name="fb_login_protocol_scheme">fb770601733096605</string>
+</resources>
