@@ -13,6 +13,12 @@ import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.tasks.Task;
 import com.google.gson.Gson;
 
 import org.json.JSONException;
@@ -38,6 +44,12 @@ public class MainActivity extends AppCompatActivity {
     private final String[] LOGIN_READ_PERMISSIONS = new String[] { "public_profile", "email" };
     private Gson gson;
 
+    private GoogleSignInOptions gso;
+    private GoogleSignInClient mGoogleSignInClient;
+//    private final String GOOGLE_CLIENT_ID = "683661300541-jr57k854iied178o2qdbge9k63j4p5m4.apps.googleusercontent.com";
+    private final String GOOGLE_CLIENT_ID = "683661300541-be09k4mtbujvvqag5jedajscqpiv98ci.apps.googleusercontent.com";
+    private final int RC_SIGN_IN = 1;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,7 +59,7 @@ public class MainActivity extends AppCompatActivity {
         googleLoginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                loginTokenTextView.setText("GOOGLE SIGN IN CLICKED!!!");
+                googleSignin();
             }
         });
 
@@ -64,12 +76,39 @@ public class MainActivity extends AppCompatActivity {
         gson = new Gson();
 
         initializeFacebook();
+//        initializeGoogle();
+
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(GOOGLE_CLIENT_ID)
+                .build();
+        mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        callbackManager.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == RC_SIGN_IN) {
+            Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
+            handleSignInResult(task);
+        } else {
+            callbackManager.onActivityResult(requestCode, resultCode, data);
+        }
+    }
+
+    private void handleSignInResult(Task<GoogleSignInAccount> completedTask) {
+        try {
+            GoogleSignInAccount account = completedTask.getResult(ApiException.class);
+            String idToken = account.getIdToken();
+            loginTokenTextView.setText(idToken);
+        } catch(ApiException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void googleSignin() {
+        Intent googleSignInIntent = mGoogleSignInClient.getSignInIntent();
+        startActivityForResult(googleSignInIntent, RC_SIGN_IN);
     }
 
     private void initializeFacebook() {
@@ -78,12 +117,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onSuccess(LoginResult loginResult) {
                 String loginResultString = gson.toJson(loginResult);
-                Log.d("initializeFacebook:SUCCESS", loginResultString);
-//                loginTokenTextView.setText(userData.getString(""));
                 try {
                     JSONObject userData = new JSONObject(loginResultString).getJSONObject("accessToken");
                     String facebookToken = userData.getString("token");
-                    Log.d("initializeFacebook:SUCCESS", "TOKEN: " + facebookToken);
                     loginTokenTextView.setText(facebookToken);
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -92,12 +128,12 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onCancel() {
-                Log.d("initializeFacebook:CANCEL", "Canceled login");
+
             }
 
             @Override
             public void onError(FacebookException error) {
-                Log.d("initializeFacebook:ERROR", "Encountered error: " + error.toString());
+
             }
         });
     }

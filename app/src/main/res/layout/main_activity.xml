@@ -18,14 +18,20 @@
             android:id="@+id/main_button_google"
             android:layout_width="@dimen/button_login_width"
             android:layout_height="60dp"
+            android:background="#d34836"
             android:text="Sign in via Google"
+            android:textColor="@color/common_google_signin_btn_text_dark"
+            android:textAllCaps="false"
             android:textSize="14sp" />
         <Button
             android:id="@+id/main_button_facebook"
             android:layout_width="@dimen/button_login_width"
             android:layout_height="60dp"
-            android:layout_marginLeft="5dp"
+            android:layout_marginLeft="20dp"
+            android:background="@color/com_facebook_blue"
             android:text="Sign in via Facebook"
+            android:textColor="#f7f7f7"
+            android:textAllCaps="false"
             android:textSize="14sp" />
     </LinearLayout>
 

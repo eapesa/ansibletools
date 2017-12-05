@@ -1,5 +1,5 @@
 <resources>
     <dimen name="edittext_height">44dp</dimen>
-    <dimen name="button_login_width">150dp</dimen>
+    <dimen name="button_login_width">100dp</dimen>
     <dimen name="elem_margin_top">10dp</dimen>
 </resources>
