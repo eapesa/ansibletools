@@ -1,5 +1,6 @@
 package com.droidtools.eapesa.ansible;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -11,6 +12,12 @@ import android.widget.TextView;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
+import com.facebook.accountkit.AccessToken;
+import com.facebook.accountkit.Account;
+import com.facebook.accountkit.AccountKit;
+import com.facebook.accountkit.ui.AccountKitActivity;
+import com.facebook.accountkit.ui.AccountKitConfiguration;
+import com.facebook.accountkit.ui.LoginType;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -26,32 +33,25 @@ import org.json.JSONObject;
 
 import java.util.Arrays;
 
-//import com.facebook.FacebookSdk;
-//import com.facebook.appevents.AppEventsLogger;
-
-
-/**
- * Created by eapesa on 12/4/17.
- */
-
 public class MainActivity extends AppCompatActivity {
-
-    private Button googleLoginButton;
-    private Button facebookLoginButton;
     private TextView loginTokenTextView;
     private CallbackManager callbackManager;
 
     private final String[] LOGIN_READ_PERMISSIONS = new String[] { "public_profile", "email" };
     private Gson gson;
 
-    private GoogleSignInOptions gso;
     private GoogleSignInClient mGoogleSignInClient;
-//    private final String GOOGLE_CLIENT_ID = "683661300541-jr57k854iied178o2qdbge9k63j4p5m4.apps.googleusercontent.com";
     private final String GOOGLE_CLIENT_ID = "683661300541-be09k4mtbujvvqag5jedajscqpiv98ci.apps.googleusercontent.com";
-    private final int RC_SIGN_IN = 1;
+    private final int REQUEST_CODE_GOOGLE = 1;
+    private final int REQUEST_CODE_ACCOUNTKIT = 2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Button googleLoginButton;
+        Button facebookLoginButton;
+        final Button accountKitLoginButton;
+        final Activity activity = this;
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_activity);
 
@@ -75,22 +75,28 @@ public class MainActivity extends AppCompatActivity {
         loginTokenTextView = findViewById(R.id.main_textview_token);
         gson = new Gson();
 
-        initializeFacebook();
-//        initializeGoogle();
+        accountKitLoginButton = findViewById(R.id.main_button_accountkit);
+        accountKitLoginButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+//                loginTokenTextView.setText("AK CLICKED!");
+                accountKitPhoneLogin(activity);
+            }
+        });
 
-        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken(GOOGLE_CLIENT_ID)
-                .build();
-        mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
+        initializeFacebook();
+        initializeGoogle();
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == RC_SIGN_IN) {
+        if (requestCode == REQUEST_CODE_GOOGLE) {
             Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
             handleSignInResult(task);
+        } else if (requestCode == REQUEST_CODE_ACCOUNTKIT) {
+            loginTokenTextView.setText(AccountKit.getCurrentAccessToken().getToken());
         } else {
             callbackManager.onActivityResult(requestCode, resultCode, data);
         }
@@ -108,7 +114,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void googleSignin() {
         Intent googleSignInIntent = mGoogleSignInClient.getSignInIntent();
-        startActivityForResult(googleSignInIntent, RC_SIGN_IN);
+        startActivityForResult(googleSignInIntent, REQUEST_CODE_GOOGLE);
     }
 
     private void initializeFacebook() {
@@ -138,4 +144,22 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    private void initializeGoogle() {
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(GOOGLE_CLIENT_ID)
+                .build();
+        mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
+    }
+
+    private void accountKitPhoneLogin(Activity activity) {
+        final Intent intent = new Intent(activity, AccountKitActivity.class);
+        AccountKitConfiguration.AccountKitConfigurationBuilder configurationBuilder =
+                new AccountKitConfiguration.AccountKitConfigurationBuilder(
+                        LoginType.PHONE,
+                        AccountKitActivity.ResponseType.TOKEN
+                ).setReceiveSMS(true);
+        intent.putExtra(AccountKitActivity.ACCOUNT_KIT_ACTIVITY_CONFIGURATION,
+                configurationBuilder.build());
+        startActivityForResult(intent, REQUEST_CODE_ACCOUNTKIT);
+    }
 }

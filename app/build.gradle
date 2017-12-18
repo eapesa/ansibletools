@@ -4,7 +4,7 @@ android {
     compileSdkVersion 26
     defaultConfig {
         applicationId "com.droidtools.eapesa.ansible"
-        minSdkVersion 23
+        minSdkVersion 22
         targetSdkVersion 26
         versionCode 1
         versionName "1.0"
@@ -27,6 +27,7 @@ dependencies {
     compile 'com.facebook.android:facebook-login:[4,5)'
     compile 'com.google.code.gson:gson:2.4'
     compile 'com.google.android.gms:play-services-auth:11.6.0'
+    compile 'com.facebook.android:account-kit-sdk:4.+'
 }
 
 apply plugin: 'com.google.gms.google-services'

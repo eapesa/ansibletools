@@ -3,4 +3,8 @@
     <string name="text_view_default">TOKENS HERE</string>
     <string name="facebook_app_id">770601733096605</string>
     <string name="fb_login_protocol_scheme">fb770601733096605</string>
+    <string name="accountkit_client_token">713c49a01dde703348e312e6f64d2b5e</string>
+    <string name="button_label_facebook">Sign in via Facebook</string>
+    <string name="button_label_google">Sign in via Google</string>
+    <string name="button_label_accountkit">Sign in via Account Kit</string>
 </resources>

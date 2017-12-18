@@ -15,21 +15,45 @@
         android:orientation="horizontal"
         android:gravity="center_horizontal">
         <Button
+            style="?android:attr/buttonBarButtonStyle"
             android:id="@+id/main_button_google"
             android:layout_width="@dimen/button_login_width"
             android:layout_height="60dp"
             android:background="#d34836"
-            android:text="Sign in via Google"
+            android:text="@string/button_label_google"
             android:textColor="@color/common_google_signin_btn_text_dark"
             android:textAllCaps="false"
             android:textSize="14sp" />
         <Button
+            style="?android:attr/buttonBarButtonStyle"
             android:id="@+id/main_button_facebook"
             android:layout_width="@dimen/button_login_width"
             android:layout_height="60dp"
-            android:layout_marginLeft="20dp"
+            android:layout_marginStart="20dp"
             android:background="@color/com_facebook_blue"
-            android:text="Sign in via Facebook"
+            android:text="@string/button_label_facebook"
+            android:textColor="#f7f7f7"
+            android:textAllCaps="false"
+            android:textSize="14sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/main_container2_buttons"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:layout_below="@+id/main_container_buttons"
+        android:paddingBottom="5dp"
+        android:paddingTop="5dp"
+        android:orientation="horizontal"
+        android:gravity="center_horizontal">
+        <Button
+            style="?android:attr/buttonBarButtonStyle"
+            android:id="@+id/main_button_accountkit"
+            android:layout_width="@dimen/button_login_width"
+            android:layout_height="60dp"
+            android:background="#96BDEB"
+            android:text="@string/button_label_accountkit"
             android:textColor="#f7f7f7"
             android:textAllCaps="false"
             android:textSize="14sp" />
@@ -39,7 +63,7 @@
         android:id="@+id/main_textview_token"
         android:layout_width="300dp"
         android:layout_height="250dp"
-        android:layout_below="@+id/main_container_buttons"
+        android:layout_below="@+id/main_container2_buttons"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="20dp"
         android:textSize="16sp"
